@@ -1,1 +1,24 @@
+name: Autograding Feedback
+on: [push]
+jobs:
+  feedback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Tests
+        run: mvn test
+        continue-on-error: true # So the workflow doesn't stop if tests fail
+
+      # Example: Custom logic to check for specific failures
+      - name: Check for Encapsulation Failure
+        if: failure()
+        run: |
+          echo "::warning title=Encapsulation Error::Check your access modifiers! Ensure 'balance' is protected, not public."
